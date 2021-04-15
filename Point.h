@@ -204,4 +204,3 @@ inline std::string Point<T, dimensions>::to_string() const noexcept
 }
 
 
-
