@@ -15,9 +15,9 @@ void Color::setColor(ColorsEnum colorEnum) noexcept
 	green_ = static_cast<int>(colorEnum) % 0x10000;
 	blue_ = static_cast<int>(colorEnum) % 0x100;
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	std::cout << "setColor(" << (int)red_ << ", " << (int)green_ << ", " << (int)blue_ << ") ";
-#endif // DEBUG
+#endif // _DEBUG
 }
 
 void Color::setColor(Color color) noexcept
