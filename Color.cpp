@@ -18,6 +18,7 @@ void Color::setColor(ColorsEnum colorEnum) noexcept
 #ifdef _DEBUG
 	std::cout << "setColor(" << (int)red_ << ", " << (int)green_ << ", " << (int)blue_ << ") ";
 #endif // _DEBUG
+
 }
 
 void Color::setColor(Color color) noexcept
