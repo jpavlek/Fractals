@@ -14,6 +14,6 @@ private:
 public:
 	Timer() noexcept;
 	void start() noexcept;
-	void end() noexcept;
+	void end(bool verbose = true) noexcept;
 };
 
