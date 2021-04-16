@@ -15,10 +15,13 @@ Timer::Timer() noexcept:
 {
 }
 
-void Timer::end() noexcept
+void Timer::end(bool verbose) noexcept
 {
 	end_ = std::chrono::high_resolution_clock::now();
 	elapsedTime_ = end_ - start_;
 	calls_++;
-	std::cout << "Elapsed time: " << elapsedTime_.count() << " Calls: " << std::to_string(calls_) << "\n";
+	if (verbose)
+	{
+		std::cout << "Elapsed time: " << elapsedTime_.count() << " Calls: " << std::to_string(calls_) << "\n";
+	}
 }
