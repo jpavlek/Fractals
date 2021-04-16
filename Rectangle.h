@@ -23,6 +23,7 @@ public:
 	inline T sizeX() const noexcept;
 	inline T sizeY() const noexcept;
 	inline T area() const noexcept;
+	std::string to_string(bool bottomLeftFirst = true) const noexcept;
 	~Rectangle() = default;
 };
 
@@ -140,4 +141,18 @@ template< typename T>
 inline T Rectangle<T>::area() const noexcept
 {
 	return sizeX() * sizeY();
+}
+
+template<typename T>
+inline std::string Rectangle<T>::to_string(bool bottomLeftFirst) const noexcept
+{
+	std::string result;
+	if (bottomLeftFirst)
+	{
+		result = bottomLeftCorner_.to_string() + " - " + topRightCorner_.to_string();
+		return result;
+	}
+	
+	result = topRightCorner_.to_string() + " - " + bottomLeftCorner_.to_string();
+	return result;
 }
