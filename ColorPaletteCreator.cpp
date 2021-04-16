@@ -1,6 +1,7 @@
 #pragma pack(2)
 #include "ColorPaletteCreator.h"
 #include <iostream>
+#include "FileSystem.h"
 
 ColorPalette ColorPaletteCreator::createPalette(ColorPalettesClass colorPaletteType, int step)
 {
@@ -8,6 +9,13 @@ ColorPalette ColorPaletteCreator::createPalette(ColorPalettesClass colorPaletteT
 
 	switch (colorPaletteType)
 	{
+	case ColorPalettesClass::RGBCube2:
+	{
+		colorPaletteCreator.addColorPaletteRangePoints({ ColorsEnum::Black, ColorsEnum::White, ColorsEnum::Black });
+		ColorPalette colorPalette = colorPaletteCreator.createPaletteFromRangePoints(ColorPalettesClass::RGBCube2, step);
+		return colorPalette;
+	}
+	break;
 	case ColorPalettesClass::RGBCube3:
 	{
 		colorPaletteCreator.addColorPaletteRangePoints({ ColorsEnum::Blue, ColorsEnum::Green, ColorsEnum::Red, ColorsEnum::Blue });
@@ -169,9 +177,13 @@ ColorPalette ColorPaletteCreator::createPaletteFromRangePoints(ColorPalettesClas
 	}
 	std::string colorPaletteName = std::string("Palette_") + ColorPalette::toString(colorPaletteType) + "_" + std::to_string(paletteSize) + "_" + std::to_string(step);
 	ColorPalette colorPalette(colorPaletteName, paletteSize, paletteColors);
-	std::cout << colorPaletteName << " set...\n";
+	std::cout << colorPaletteName << " set.\n";
 
-	colorPalette.saveColorPaletteAsBitmapFile(std::string(".\\Palettes\\") + colorPaletteName + ".bmp");
+	if (FileSystem::checkRelativeFilePath("Palettes"))
+	{
+		std::string relativeFilePathName = std::string(".\\Palettes\\") + colorPaletteName + ".bmp";
+		colorPalette.saveColorPaletteAsBitmapFile(relativeFilePathName);
+	}
 	
 	return colorPalette;
 }

@@ -7,6 +7,7 @@
 
 enum class ColorPalettesClass
 {
+	RGBCube2,
 	RGBCube3,	// 3 x 256 color transitions on a RGB cube (Blue-Green-Red-Blue, up to 768 colors in total).
 	RGBCube4,	// 4 x 256 color transitions on a RGB cube (Black-Blue-Green-Red-Blue, up to 1024 colors in total).
 	RGBCube5,	// 5 x 256 color transitions on a RGB cube, up to 1280 colors in total.

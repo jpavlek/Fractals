@@ -5,6 +5,7 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include "FileSystem.h"
 
 std::string ColorPalette::toString(const ColorPalettesClass& colorEnum)
 {
@@ -12,6 +13,9 @@ std::string ColorPalette::toString(const ColorPalettesClass& colorEnum)
 
 	switch (colorEnum)
 	{
+	case ColorPalettesClass::RGBCube2:
+		colorEnumName = "RGBCube2";
+		break;
 	case ColorPalettesClass::RGBCube3:
 		colorEnumName = "RGBCube3";
 		break;
@@ -128,9 +132,15 @@ void ColorPalette::setPalette(int paletteSize) noexcept
         color.setColor(MAX_COLOR_VALUE - nuanceStep * i, 0, nuanceStep * i);
         colorPalette_[i + 3 * transitionSize] = color;
     }
-    std::cout << "Default palette set...\n";
 
-    saveColorPaletteAsBitmapFile("DefaultPalette.bmp");
+#ifdef _DEBUG
+	std::cout << "Default palette set...\n";
+#endif // _DEBUG
+
+	if (FileSystem::checkRelativeFilePath("Palettes"))
+	{
+		saveColorPaletteAsBitmapFile(".\\Palettes\\DefaultPalette.bmp");
+	}
 }
 
 
@@ -159,7 +169,11 @@ void ColorPalette::saveColorPaletteAsBitmapFile(std::string fileName) noexcept
 	int width = paletteSize_;
 	int height = DEFAULT_PALETTE_BITMAP_HEIGHT;
 	Bitmap bitmap(width, DEFAULT_PALETTE_BITMAP_HEIGHT);
-	std::cout << "Filling color palette bitmap (" << width << "x" << height << ")...     ";
+
+#ifdef _DEBUG
+	std::cout << "Filling color palette bitmap (" << width << "x" << height << ")...\n";
+#endif // _DEBUG
+	
 	for (int x = 0; x < width; ++x)
 	{
 		for (int y = 0; y < height; ++y)
@@ -167,15 +181,17 @@ void ColorPalette::saveColorPaletteAsBitmapFile(std::string fileName) noexcept
 			bitmap.setPixel(x, y, getColor(x));
 		}
 	}
-	std::cout << "\n";
 
-	std::cout << "Saving color palette bitmap image to file: \"" << fileName << "\".\n\n";
+	std::cout << "Saving color palette bitmap image to file: \"" << fileName << "\".\n";
 	bool result = bitmap.write(fileName);
 }
 
 void ColorPalette::saveColorPaletteAsBitmapFile() noexcept
 {
 	std::string fileName = paletteName_ + ".bmp";
-	saveColorPaletteAsBitmapFile(fileName);
+	if (FileSystem::checkRelativeFilePath("Palettes"))
+	{
+		saveColorPaletteAsBitmapFile(fileName);
+	}
 }
 
