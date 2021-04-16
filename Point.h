@@ -25,6 +25,7 @@ public:
 	Point<T, dimensions> operator*(const Point<T, dimensions>& other) noexcept;
 	Point<T, dimensions> operator/(T divisor);
 	Point<T, dimensions> operator/(const Point<T, dimensions>& other) const;
+	std::string to_string() const noexcept;
 };
 
 using Pixel = Point<int>;
@@ -180,6 +181,24 @@ inline Point<T, dimensions> Point<T, dimensions>::operator/(const Point<T, dimen
 			result.coordinates_[index] = coordinates_[index] / other.coordinates_[index];
 		}
 	}
+
+	return result;
+}
+
+template<typename T, int dimensions>
+inline std::string Point<T, dimensions>::to_string() const noexcept
+{
+	std::string result = "(";
+	for (size_t index = 0; index < coordinates_.size(); ++index)
+	{
+		result += std::to_string(coordinates_[index]);
+		if (index < coordinates_.size() - 1)
+		{
+			result += ", ";
+		}
+	}
+
+	result += ")";
 
 	return result;
 }
