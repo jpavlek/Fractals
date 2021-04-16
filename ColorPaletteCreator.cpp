@@ -65,6 +65,77 @@ ColorPalette ColorPaletteCreator::createPalette(ColorPalettesClass colorPaletteT
 	}
 }
 
+void ColorPaletteCreator::createAllPalettesTest()
+{
+	std::cout << "Color Palettes Test - Create all palettes: \n" << std::endl;
+
+	ColorPalette colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBSpectrum10, 1);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBSpectrum10, 2);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBSpectrum10, 4);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBSpectrum10, 8);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBSpectrum10, 16);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBSpectrum10, 32);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBSpectrum10, 64);
+
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBRainbow10, 64);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBRainbow10, 32);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBRainbow10, 16);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBRainbow10, 8);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBRainbow10, 4);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBRainbow10, 2);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBRainbow10, 1);
+
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube10, 1);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube10, 2);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube10, 4);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube10, 8);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube10, 16);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube10, 32);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube10, 64);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube10, 128);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube10, 256);
+
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube6, 256);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube6, 128);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube6, 64);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube6, 32);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube6, 16);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube6, 8);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube6, 4);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube6, 2);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube6, 1);
+
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube5, 1);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube5, 2);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube5, 4);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube5, 8);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube5, 16);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube5, 32);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube5, 64);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube5, 128);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube5, 256);
+
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube4, 256);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube4, 128);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube4, 64);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube4, 32);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube4, 16);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube4, 8);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube4, 4);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube4, 2);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube4, 1);
+
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube3, 1);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube3, 2);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube3, 4);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube3, 8);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube3, 16);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube3, 32);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube3, 64);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube3, 128);
+	colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube3, 256);
+}
+
 ColorPaletteCreator::ColorPaletteCreator() noexcept
 {
 }

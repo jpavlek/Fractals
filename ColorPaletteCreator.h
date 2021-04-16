@@ -9,6 +9,7 @@ private:
 	std::vector<Color> rangeColors_;
 public:
 	static ColorPalette createPalette(ColorPalettesClass colorPaletteType, int step);
+	static void createAllPalettesTest();
 public:
 	ColorPaletteCreator() noexcept;
 	ColorPalette createPaletteFromRangePoints(ColorPalettesClass colorPaletteType, int step);
