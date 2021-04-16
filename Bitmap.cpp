@@ -1,11 +1,10 @@
 #pragma pack(2)
 #include "Bitmap.h"
+#include "Color.h"
 #include "BitmapFileHeader.h"
 #include "BitmapInfoHeader.h"
 #include <fstream>
-
-#include "Color.h"
-
+#include <iostream>
 
 Bitmap::Bitmap(int width, int height) : 
 	width_(width), 
@@ -31,14 +30,14 @@ void Bitmap::setPixel(int x, int y, Color color)
 	setPixel(x, y, red, green, blue);
 }
 
-bool Bitmap::write(std::string filename)
+bool Bitmap::write(const std::string& filename)
 {
 	BitmapFileHeader fileHeader;
 	BitmapInfoHeader infoHeader;
 
-	fileHeader.filesize_ = sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader) + width_ * height_ * 3;
 	fileHeader.dataOffset_ = sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader);
 
+	fileHeader.filesize_ = sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader) + width_ * height_ * 3;
 	infoHeader.width_ = width_;
 	infoHeader.heigth_ = height_;
 
@@ -47,6 +46,7 @@ bool Bitmap::write(std::string filename)
 
 	if (!file)
 	{
+		std::cout << "\nFile: " << filename << " could not be opened...\n";
 		return false;
 	}
 
