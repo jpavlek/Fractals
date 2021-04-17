@@ -140,6 +140,7 @@ void ColorPalette::setPalette(int paletteSize) noexcept
 	if (FileSystem::checkRelativeFilePath("Palettes"))
 	{
 		saveColorPaletteAsBitmapFile(".\\Palettes\\DefaultPalette.bmp");
+		std::cout << "\n";
 	}
 }
 
