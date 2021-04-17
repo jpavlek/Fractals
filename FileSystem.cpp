@@ -1,20 +1,49 @@
 #include "FileSystem.h"
-#include <filesystem>
 #include <iostream>
-#include <windows.h>
 
+#if (__cplusplus >= 201703L) //201703L (C++17) //202002L (C++20)
+#include <filesystem>
+#elif (__cplusplus >= 201402L) //201402L (C++14)
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include <experimental/filesystem>
+#else //201103L (C++11) //199711L (C++98 or C++03) 
+#include <windows.h>
+#endif
+
+#if (__cplusplus >= 201703L) //202002L (C++20) //201703L (C++17)
 bool FileSystem::checkRelativeFilePath(std::string filename)
 {
 	const std::filesystem::path path = std::filesystem::current_path() / filename;
-	
 	if (std::filesystem::exists(path)) return true;
-
+	
 #ifdef _DEBUG
 	std::cout << path << " does not exist, creating it.\n";
 #endif // _DEBUG
 
 	if (std::filesystem::create_directory(path)) return true;
-	
+
+	return false;
+}
+
+#elif (__cplusplus >= 201402L) //201402L (C++14)
+
+bool FileSystem::checkRelativeFilePath(std::string filename)
+{
+	const std::experimental::filesystem::path path = std::experimental::filesystem::current_path() / filename;
+	if (std::experimental::filesystem::exists(path)) return true;
+
+#ifdef _DEBUG
+	std::cout << path << " does not exist, creating it.\n";
+#endif // _DEBUG
+	if (std::experimental::filesystem::create_directory(path)) return true;
+
+	return false;
+}
+
+#else //201103L (C++11) //199711L (C++98 or C++03) 
+bool FileSystem::checkRelativeFilePath(std::string filename)
+{
+	checkFilePath(filename);
 	return false;
 }
 
@@ -48,3 +77,7 @@ bool FileSystem::checkFilePath(std::string filename)
 
 	return result;
 }
+
+#endif
+
+
