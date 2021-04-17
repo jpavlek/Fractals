@@ -8,6 +8,11 @@ void Timer::start() noexcept
 	start_ = std::chrono::high_resolution_clock::now();
 }
 
+void Timer::resetCalls()
+{
+	calls_ = 0;
+}
+
 Timer::Timer() noexcept:
 	start_ (std::chrono::high_resolution_clock::now()),
 	end_(std::chrono::high_resolution_clock::now()),

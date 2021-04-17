@@ -4,6 +4,9 @@
 class Timer
 {
 public:
+	static void resetCalls();
+
+public:
 	static int calls_;
 
 private:
