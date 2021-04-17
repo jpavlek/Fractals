@@ -1,13 +1,20 @@
 #pragma once
 #pragma pack(2)
 #include "Fractal.h"
-#include <complex>
-
-#include "Point.h"
-#include "Rectangle.h"
 #include <immintrin.h>
 
-using ComplexRectangle = Rectangle<double>;
+namespace Colors
+{
+	struct Color;
+	class ColorPalette;
+}
+
+namespace Geometry
+{
+	template<typename T> struct Rectangle;
+}
+
+using ComplexRectangle = Geometry::Rectangle<double>;
 
 namespace Fractals
 {
@@ -17,16 +24,16 @@ namespace Fractals
 		static constexpr const int MAX_ITERATIONS = 10 * 256;
 		static constexpr const int MAX_ITERATIONS_DEFAULT = 64;
 	private:
-		std::vector<Color> iterationColors_;
+		std::vector<Colors::Color> iterationColors_;
 	public:
 		static void createAllThreadsTest(const int width = 4096, const int height = 4096, const int maxIterations = 2048);
 	public:
 		Mandelbrot() noexcept;
 		Mandelbrot(const int width, const int height) noexcept;
 		Mandelbrot(const int width, const int height, int maxIterations) noexcept;
-		Mandelbrot(const int width, const int height, const ColorPalette& colorPalette) noexcept;
+		Mandelbrot(const int width, const int height, const Colors::ColorPalette& colorPalette) noexcept;
 		Mandelbrot(const int width, const int height, 
-				   const ColorPalette& colorPalette, int maxIterations = MAX_ITERATIONS_DEFAULT, 
+				   const Colors::ColorPalette& colorPalette, int maxIterations = MAX_ITERATIONS_DEFAULT,
 				   OperationMode operationMode = OperationMode::MultiThreaded, 
 				   ThreadCountBase threadCountBase = ThreadCountBase::ThreadCount_32x32_div_2) noexcept;
 
@@ -41,11 +48,11 @@ namespace Fractals
 		std::string getFractalFileName() const noexcept;
 	private:
 		void prepareIterationColors() noexcept;
-		void calculateSingleThread(const ComplexRectangle& complexRectangle, const Rectangle<int>& screenRectangle) noexcept;
+		void calculateSingleThread(const ComplexRectangle& complexRectangle, const Geometry::Rectangle<int>& screenRectangle) noexcept;
 		void calculateMultiThreads(ComplexRectangle& complexRectangle, ThreadCountBase threadCountBase) noexcept;
 		void calculateMultiThreads(ComplexRectangle& complexRectangle) noexcept;
 		void calculateMultiThreads(ComplexRectangle& complexRectangle, int threadCountBase) noexcept;
-		void calculate(const ComplexRectangle& complexRectangle, const Rectangle<int>& screenRectangle) noexcept;
+		void calculate(const ComplexRectangle& complexRectangle, const Geometry::Rectangle<int>& screenRectangle) noexcept;
 
 /**
 *	By default Advanced Vector Extensions 2 (/arch:AVX2) enhanced instruction set (AVX2) should be active in the MS Visual Studio (2019) project.
@@ -57,10 +64,10 @@ namespace Fractals
 *	Please, make sure that it is properly set in both Debug and Release Configuration for the x64 platform.
 */
 #if defined(__AVX512F__)
-		void calculateImmintrinsicAVX512(const ComplexRectangle& complexRectangle, const Rectangle<int>& screenRectangle) noexcept;
+		void calculateImmintrinsicAVX512(const ComplexRectangle& complexRectangle, const Geometry::Rectangle<int>& screenRectangle) noexcept;
 		__m512i getIterationImintrin(const __m512d x, const __m512d y) const noexcept;
 #elif defined(__AVX2__)
-		void calculateImmintrinsicAVX2(const ComplexRectangle& complexRectangle, const Rectangle<int>& screenRectangle) noexcept;
+		void calculateImmintrinsicAVX2(const ComplexRectangle& complexRectangle, const Geometry::Rectangle<int>& screenRectangle) noexcept;
 		__m256i getIterationImintrin(const __m256d x, const __m256d y) const noexcept;
 #endif
 

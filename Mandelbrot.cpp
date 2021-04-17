@@ -1,21 +1,21 @@
 #pragma pack(2)
 #include "Mandelbrot.h"
 #include <iostream>
-#include <complex>
-#include <chrono>
+#include "ColorPaletteCreator.h"
 #include "Timer.h"
-#include "Point.h"
 #include <thread>
 #include "FileSystem.h"
-#include "ColorPaletteCreator.h"
-#include <string>
+#include "Rectangle.h"
+#include "Point.h"
 
 #ifdef _WIN32
-#include <intrin.h>
+//#include <intrin.h>
 #endif
 
-using ScreenRectangle = Rectangle<int>;
-using ScreenOffset = Point<int>;
+using ScreenRectangle = Geometry::Rectangle<int>;
+using ScreenOffset = Geometry::Point<int>;
+//using Complex
+
 namespace Fractals
 {
 	void Mandelbrot::createAllThreadsTest(const int width, const int height, const int maxIterations)
@@ -24,7 +24,7 @@ namespace Fractals
 										"========================================================================================================================\n\n";
 		std::cout << outputString;
 
-		ColorPalette colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube4, 1);
+		Colors::ColorPalette colorPalette = Colors::ColorPaletteCreator::createPalette(Colors::ColorPalettesClass::RGBCube4, 1);
 		std::cout << "\n";
 
 		{
@@ -60,26 +60,26 @@ namespace Fractals
 	}
 
 	Mandelbrot::Mandelbrot() noexcept:
-		Mandelbrot(DEFAULT_X, DEFAULT_Y, ColorPalette(), MAX_ITERATIONS_DEFAULT)
+		Mandelbrot(DEFAULT_X, DEFAULT_Y, Colors::ColorPalette(), MAX_ITERATIONS_DEFAULT)
 	{
 	}
 
 	Mandelbrot::Mandelbrot(const int width, const int height) noexcept:
-		Mandelbrot(width, height, ColorPalette(), MAX_ITERATIONS_DEFAULT)
+		Mandelbrot(width, height, Colors::ColorPalette(), MAX_ITERATIONS_DEFAULT)
 	{
 	}
 
 	Mandelbrot::Mandelbrot(const int width, const int height, int maxIterations) noexcept :
-		Mandelbrot(width, height, ColorPalette(), maxIterations)
+		Mandelbrot(width, height, Colors::ColorPalette(), maxIterations)
 	{
 	}
 
-	Mandelbrot::Mandelbrot(const int width, const int height, const ColorPalette& colorPalette) noexcept:
+	Mandelbrot::Mandelbrot(const int width, const int height, const Colors::ColorPalette& colorPalette) noexcept:
 		Mandelbrot(width, height, colorPalette, MAX_ITERATIONS_DEFAULT)
 	{
 	}
 
-	Mandelbrot::Mandelbrot(const int width, const int height, const ColorPalette& colorPalette, int maxIterations, OperationMode operationMode, ThreadCountBase threadCountBase) noexcept:
+	Mandelbrot::Mandelbrot(const int width, const int height, const Colors::ColorPalette& colorPalette, int maxIterations, OperationMode operationMode, ThreadCountBase threadCountBase) noexcept:
 		Fractal(width, height, colorPalette, maxIterations, operationMode, threadCountBase)
 	{
 		prepareIterationColors();
@@ -126,11 +126,11 @@ namespace Fractals
 		checkCalculationPercentage(0, 16, 0, 100);
 		const ScreenOffset screenOffset = screenRectangle.bottomLeftCorner_;
 		const ScreenSize screenSize = screenRectangle.size();
-		const ComplexPoint complexOffset = complexRectangle.bottomLeftCorner_;
-		const ComplexPoint discreteStep(complexRectangle.sizeX() / screenSize.coordinates_[0], complexRectangle.sizeY() / screenSize.coordinates_[1]);
+		const Geometry::ComplexPoint complexOffset = complexRectangle.bottomLeftCorner_;
+		const Geometry::ComplexPoint discreteStep(complexRectangle.sizeX() / screenSize.coordinates_[0], complexRectangle.sizeY() / screenSize.coordinates_[1]);
 
-		Color color;
-		ComplexPoint fractalPoint = 0.0, step = 0.0;
+		Colors::Color color;
+		Geometry::ComplexPoint fractalPoint = 0.0, step = 0.0;
 		int x = 0, iterations = 0;
 		for (; x < screenSize.coordinates_[0]; ++x)
 		{
@@ -181,7 +181,7 @@ namespace Fractals
 
 		std::vector<ComplexRectangle> complexRectangles;
 
-		std::vector<Rectangle<int>> rectangles;
+		std::vector<Geometry::Rectangle<int>> rectangles;
 		rectangles.reserve(maxThreads);
 
 		std::vector<ScreenRectangle> screenRectangles;
@@ -197,7 +197,7 @@ namespace Fractals
 					complexRectangle.bottomLeftCorner_.coordinates_[0] + (i + 1) * fractalWidth, complexRectangle.bottomLeftCorner_.coordinates_[1] + (j + 1) * fractalWidth); // OK
 				complexRectangles.emplace_back(cpr);
 
-				Rectangle<int> screenRegion = Rectangle<int>(rectangleScreenSize) + ScreenSize(rectangleScreenSize) * ScreenOffset(i, j);
+				Geometry::Rectangle<int> screenRegion = Geometry::Rectangle<int>(rectangleScreenSize) + ScreenSize(rectangleScreenSize) * ScreenOffset(i, j);
 				rectangles.emplace_back(screenRegion);
 			}
 		}
@@ -220,11 +220,11 @@ namespace Fractals
 		Timer timer;
 		const ScreenOffset screenOffset = screenRectangle.bottomLeftCorner_;
 		const ScreenSize screenSize = screenRectangle.size();
-		const ComplexPoint complexOffset = complexRectangle.bottomLeftCorner_;
-		const ComplexPoint discreteStep(complexRectangle.sizeX() / screenSize.coordinates_[0], complexRectangle.sizeY() / screenSize.coordinates_[1]);
+		const Geometry::ComplexPoint complexOffset = complexRectangle.bottomLeftCorner_;
+		const Geometry::ComplexPoint discreteStep(complexRectangle.sizeX() / screenSize.coordinates_[0], complexRectangle.sizeY() / screenSize.coordinates_[1]);
 
-		Color color;
-		ComplexPoint fractalPoint = 0.0, step = 0.0;
+		Colors::Color color;
+		Geometry::ComplexPoint fractalPoint = 0.0, step = 0.0;
 		int x = 0, iterations = 0;
 		for (; x < screenSize.coordinates_[0]; ++x)
 		{
@@ -254,12 +254,12 @@ namespace Fractals
 		Timer timer;
 		const ScreenOffset screenOffset = screenRectangle.bottomLeftCorner_;
 		const ScreenSize screenSize = screenRectangle.size();
-		const ComplexPoint complexOffset = complexRectangle.bottomLeftCorner_;
-		const ComplexPoint discreteStep(complexRectangle.sizeX() / screenSize.coordinates_[0], complexRectangle.sizeY() / screenSize.coordinates_[1]);
+		const Geometry::ComplexPoint complexOffset = complexRectangle.bottomLeftCorner_;
+		const Geometry::ComplexPoint discreteStep(complexRectangle.sizeX() / screenSize.coordinates_[0], complexRectangle.sizeY() / screenSize.coordinates_[1]);
 
-		ComplexPoint fractalPoint = 0.0;
-		ComplexPoint step = 0.0;
-		Color color, color1, color2, color3, color4, color5, color6, color7;
+		Geometry::ComplexPoint fractalPoint = 0.0;
+		Geometry::ComplexPoint step = 0.0;
+		Colors::Color color, color1, color2, color3, color4, color5, color6, color7;
 
 		const __m512d _dicreteStepY = _mm512_set1_pd(discreteStep.coordinates_[1]);										// |dY|dY|dY|dY|dY|dY|dY|dY|
 		const __m512d _offsetsY = _mm512_mul_pd(_mm512_set_pd(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0), _dicreteStepY);	// |0|dY|2dY|3dY|4dY|5dY|6dY|7dY|
@@ -376,12 +376,12 @@ namespace Fractals
 		Timer timer;
 		const ScreenOffset screenOffset = screenRectangle.bottomLeftCorner_;
 		const ScreenSize screenSize = screenRectangle.size();
-		const ComplexPoint complexOffset = complexRectangle.bottomLeftCorner_;
-		const ComplexPoint discreteStep(complexRectangle.sizeX() / screenSize.coordinates_[0], complexRectangle.sizeY() / screenSize.coordinates_[1]);
+		const Geometry::ComplexPoint complexOffset = complexRectangle.bottomLeftCorner_;
+		const Geometry::ComplexPoint discreteStep(complexRectangle.sizeX() / screenSize.coordinates_[0], complexRectangle.sizeY() / screenSize.coordinates_[1]);
 		
-		ComplexPoint fractalPoint = 0.0;
-		ComplexPoint step = 0.0;
-		Color color, color1, color2, color3;
+		Geometry::ComplexPoint fractalPoint = 0.0;
+		Geometry::ComplexPoint step = 0.0;
+		Colors::Color color, color1, color2, color3;
 
 		const __m256d _dicreteStepY = _mm256_set1_pd(discreteStep.coordinates_[1]);					// |dY|dY|dY|dY|
 		const __m256d _offsetsY = _mm256_mul_pd(_mm256_set_pd(0.0, 1.0, 2.0, 3.0), _dicreteStepY);	// |0|dY|2dY|3dY|
@@ -529,7 +529,7 @@ namespace Fractals
 
 	void Mandelbrot::saveImageToFile()
 	{
-		if (FileSystem::checkRelativeFilePath("Fractals"))
+		if (FileSystem::FileSystem::FileSystem::checkRelativeFilePath("Fractals"))
 		{
 			std::string fileName = getFractalFileName();
 			saveToFile(fileName);
