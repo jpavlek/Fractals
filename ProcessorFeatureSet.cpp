@@ -11,44 +11,20 @@
 void ProcessorFeatureSet::checkProcessorFeatures()
 {
     ProcessorFeatureSet PFS;
+    
+    std::string outputCPUDataString;
+    outputCPUDataString.reserve(200);
+    outputCPUDataString = std::string("CPU Vendor: ") + PFS.vendor_ + "\nBrand: " + PFS.brand_ + "\nEnhanced Instruction Sets Supported: ";
+    if (PFS.f_1_EDX_[25]) outputCPUDataString += "| SSE ";
+    if (PFS.f_1_EDX_[26]) outputCPUDataString += "| SSE2 ";
+    if (PFS.f_1_ECX_[19]) outputCPUDataString += "| SSE41 ";
+    if (PFS.f_1_ECX_[20]) outputCPUDataString += "| SSE42 ";
+    if (PFS.f_1_ECX_[28]) outputCPUDataString += "| AVX ";
+    if (PFS.f_7_EBX_[5])  outputCPUDataString += "| AVX2 ";
+    if (PFS.f_7_EBX_[16]) outputCPUDataString += "| AVX512F ";
 
-    std::cout << "CPU Vendor: " << PFS.vendor_ << "\n";
-    std::cout << "Brand: " << PFS.brand_ << "\n";
-
-    std::string supportedEnhancedInstructionSets = "Enhanced Instruction Sets Supported: ";
-    if (PFS.f_1_EDX_[25])
-    {
-        supportedEnhancedInstructionSets += "| SSE ";
-    }
-    if (PFS.f_1_EDX_[26])
-    {
-        supportedEnhancedInstructionSets += "| SSE2 ";
-    }
-    if (PFS.f_1_ECX_[19])
-    {
-        supportedEnhancedInstructionSets += "| SSE41 ";
-    }
-    if (PFS.f_1_ECX_[20])
-    {
-        supportedEnhancedInstructionSets += "| SSE42 ";
-    }
-    if (PFS.f_1_ECX_[28])
-    {
-        supportedEnhancedInstructionSets += "| AVX ";
-    }
-
-    if (PFS.f_7_EBX_[5])
-    {
-        supportedEnhancedInstructionSets += "| AVX2 ";
-    }
-
-    if (PFS.f_7_EBX_[16])
-    {
-        supportedEnhancedInstructionSets += "| AVX512F ";
-    }
-
-    supportedEnhancedInstructionSets += "|\n\n";
-    std::cout << supportedEnhancedInstructionSets;
+    outputCPUDataString += "|\n\n";
+    std::cout << outputCPUDataString;
 }
 
 ProcessorFeatureSet::ProcessorFeatureSet()
