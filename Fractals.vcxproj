@@ -121,6 +121,7 @@
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,6 +157,7 @@
     <ClCompile Include="Fractals.cpp" />
     <ClCompile Include="Mandelbrot.cpp" />
     <ClCompile Include="ProcessorFeatureSet.cpp" />
+    <ClCompile Include="Tests.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +173,7 @@
     <ClInclude Include="Point.h" />
     <ClInclude Include="ProcessorFeatureSet.h" />
     <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="Tests.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
