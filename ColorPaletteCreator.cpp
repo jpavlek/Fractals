@@ -2,6 +2,7 @@
 #include "ColorPaletteCreator.h"
 #include <iostream>
 #include "FileSystem.h"
+#include "Timer.h"
 
 ColorPalette ColorPaletteCreator::createPalette(ColorPalettesClass colorPaletteType, int step)
 {
@@ -75,7 +76,10 @@ ColorPalette ColorPaletteCreator::createPalette(ColorPalettesClass colorPaletteT
 
 void ColorPaletteCreator::createAllPalettesTest()
 {
-	std::cout << "Color Palettes Test - Create all palettes: \n" << std::endl;
+	std::cout << "Color Palettes Test - Create all palettes: \n";
+	std::cout << "========================================== \n\n";
+	Timer timerPalettes;
+	timerPalettes.start();
 
 	ColorPalette colorPalette;
 	for (int i = 1; i < 128; i *= 2)
@@ -90,6 +94,7 @@ void ColorPaletteCreator::createAllPalettesTest()
 		colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBSpectrum10, i);
 	}
 	std::cout << "\n";
+	timerPalettes.end();
 }
 
 ColorPaletteCreator::ColorPaletteCreator() noexcept
@@ -123,7 +128,7 @@ ColorPalette ColorPaletteCreator::createPaletteFromRangePoints(ColorPalettesClas
 			paletteColors[i* transitionSize + j] = color;
 		}
 	}
-	std::string colorPaletteName = std::string("Palette_") + ColorPalette::toString(colorPaletteType) + "_" + std::to_string(paletteSize) + "_" + std::to_string(step);
+	std::string colorPaletteName = std::string("Pal_") + ColorPalette::toString(colorPaletteType) + "_" + std::to_string(paletteSize) + "_" + std::to_string(step);
 	ColorPalette colorPalette(colorPaletteName, paletteSize, paletteColors);
 
 #ifdef _DEBUG
