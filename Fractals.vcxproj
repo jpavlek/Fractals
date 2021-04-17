@@ -117,6 +117,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,8 +132,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp14</LanguageStandard>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -146,6 +147,7 @@
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="ColorPalette.cpp" />
     <ClCompile Include="ColorPaletteCreator.cpp" />
+    <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="Fractal.cpp" />
     <ClCompile Include="Fractals.cpp" />
     <ClCompile Include="Mandelbrot.cpp" />
@@ -159,6 +161,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="ColorPalette.h" />
     <ClInclude Include="ColorPaletteCreator.h" />
+    <ClInclude Include="FileSystem.h" />
     <ClInclude Include="Fractal.h" />
     <ClInclude Include="Mandelbrot.h" />
     <ClInclude Include="Point.h" />
