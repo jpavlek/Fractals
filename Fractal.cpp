@@ -5,16 +5,16 @@
 namespace Fractals
 {
 	Fractal::Fractal()  noexcept:
-		Fractal(DEFAULT_X, DEFAULT_Y, ColorPalette(), DEFAULT_MAX_ITERATIONS, OperationMode::MultiThreaded, ThreadCountBase::ThreadCount_08x08_div_2)
+		Fractal(DEFAULT_X, DEFAULT_Y, Colors::ColorPalette(), DEFAULT_MAX_ITERATIONS, OperationMode::MultiThreaded, ThreadCountBase::ThreadCount_08x08_div_2)
 	{
 	}
 
 	Fractal::Fractal(const int width, const int height)  noexcept:
-		Fractal(width, height, ColorPalette(), DEFAULT_MAX_ITERATIONS, OperationMode::MultiThreaded, ThreadCountBase::ThreadCount_08x08_div_2)
+		Fractal(width, height, Colors::ColorPalette(), DEFAULT_MAX_ITERATIONS, OperationMode::MultiThreaded, ThreadCountBase::ThreadCount_08x08_div_2)
 	{
 	}
 
-	Fractal::Fractal(const int width, const int height, const ColorPalette& colorPalette, const int maxIterations, OperationMode operationMode, ThreadCountBase threadCountBase) noexcept:
+	Fractal::Fractal(const int width, const int height, const Colors::ColorPalette& colorPalette, const int maxIterations, const OperationMode& operationMode, const ThreadCountBase& threadCountBase) noexcept:
 		screenSize_{ width, height },
 		bitmap_{ width, height },
 		colorPalette_{ colorPalette },
@@ -30,17 +30,17 @@ namespace Fractals
 		colorPalette_.colorPalette_.shrink_to_fit();
 	}
 
-	void Fractal::setPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) noexcept
+	void Fractal::setPixel(const int x, const int y, const uint8_t red, const uint8_t green, const uint8_t blue) noexcept
 	{
 		bitmap_.setPixel(x, y, red, green, blue);
 	}
 
-	void Fractal::setPixel(int x, int y, Color color) noexcept
+	void Fractal::setPixel(const int x, const int y, const Colors::Color& color) noexcept
 	{
 		bitmap_.setPixel(x, y, color);
 	}
 
-	void Fractal::checkCalculationPercentage(int currentCount, int frequency, int increaseStep, int totalCount) noexcept
+	void Fractal::checkCalculationPercentage(const int currentCount, const int frequency, const int increaseStep, const int totalCount) noexcept
 	{
 		if (currentCount % frequency)
 		{
@@ -65,20 +65,20 @@ namespace Fractals
 		std::cout << progBar;
 	}
 
-	std::string Fractal::progressBar(const std::string prefix, const int percentage, const int total, const std::string postfix) const
+	std::string Fractal::progressBar(const std::string& prefix, const int percentage, const int total, const std::string& postfix) const
 	{
 		std::string progressBar = prefix + std::string(std::max(percentage, 0), '=') + ">" + std::string(total - percentage, '.') + postfix + " " + std::to_string(percentage) + "/" + std::to_string(total) + "%";
 		return progressBar;
 	}
 
-	bool Fractal::saveToFile(std::string filename)
+	bool Fractal::saveToFile(const std::string& filename)
 	{
 		std::cout << "Saving fractal image to file: " << filename << "... ";
 		bool result = bitmap_.write(filename);
 		return result;
 	}
 
-	std::string Fractal::operationModeToString(const OperationMode operationMode)
+	std::string Fractal::operationModeToString(const OperationMode& operationMode)
 	{
 		std::string operationModeString;
 
