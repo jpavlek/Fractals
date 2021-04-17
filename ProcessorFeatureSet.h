@@ -1,7 +1,7 @@
 #pragma once
 
-#include <array>
 #include <bitset>
+#include <array>
 #include <vector>
 
 class ProcessorFeatureSet

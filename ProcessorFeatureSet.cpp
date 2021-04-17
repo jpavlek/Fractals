@@ -1,12 +1,9 @@
 #include "ProcessorFeatureSet.h"
+#include <iostream>
 
 #ifdef _WIN32
 #include <intrin.h>
 #endif
-
-#include <stdio.h>
-#include <iostream>
-#include <string>
 
 void ProcessorFeatureSet::checkProcessorFeatures()
 {
