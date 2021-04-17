@@ -1,23 +1,18 @@
 // Fractals.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 #pragma pack(2)
-#include "Mandelbrot.h"
-#include <iostream>
-#include "ColorPaletteCreator.h"
 #include "Timer.h"
-
-#include <stdio.h>
+#include "ColorPalette.h"
+#include "Mandelbrot.h"
 #include "ProcessorFeatureSet.h"
+#include "ColorPaletteCreator.h"
+#include <iostream>
+#include "Tests.h"
 
-#ifdef _WIN32
-#include <intrin.h>
-#endif
-
-void runAllPerformanceTests()
+namespace Colors
 {
-	ColorPaletteCreator::createAllPalettesTest();
-
-	Fractals::Mandelbrot::createAllThreadsTest();
+	class ColorPalette;
+	class ColorPaletteCreator;
 }
 
 int main()
@@ -34,7 +29,7 @@ int main()
 	Timer timerOptimized;
 	timerOptimized.start();
 
-	ColorPalette colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBSpectrum10, 2);
+	Colors::ColorPalette colorPalette = Colors::ColorPaletteCreator::createPalette(Colors::ColorPalettesClass::RGBSpectrum10, 2);
 	std::cout << "\n";
 
 	Fractals::Mandelbrot mandelbrot(width, height, colorPalette, maxIterations, OperationMode::MultiThreaded, ThreadCountBase::ThreadCount_32x32_div_2);
@@ -44,7 +39,7 @@ int main()
 	std::cout << "\n";
 	Timer::resetCalls();
 
-	runAllPerformanceTests();
+	Tests::runAllPerformanceTests();
 
 	std::cout << "Done.\n";
 	timerTotal.end();
