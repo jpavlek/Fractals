@@ -24,9 +24,11 @@ int main()
 	int const height = 2 * 2 * 2048;
 	int const maxIterations = 2048;
 
+#ifdef DEBUG
 	ColorPaletteCreator::createAllPalettesTest();
+#endif // DEBUG
 
-	ColorPalette colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube4, 1);
+	ColorPalette colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBSpectrum10, 2);
 
 	Fractals::Mandelbrot mandelbrot(width, height, colorPalette, maxIterations);
 
