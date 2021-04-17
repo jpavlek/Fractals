@@ -24,19 +24,25 @@ namespace Fractals
 		Mandelbrot(const int width, const int height) noexcept;
 		Mandelbrot(const int width, const int height, int maxIterations) noexcept;
 		Mandelbrot(const int width, const int height, const ColorPalette& colorPalette) noexcept;
-		Mandelbrot(const int width, const int height, const ColorPalette& colorPalette, int maxIterations = MAX_ITERATIONS_DEFAULT) noexcept;
+		Mandelbrot(const int width, const int height, 
+				   const ColorPalette& colorPalette, int maxIterations = MAX_ITERATIONS_DEFAULT, 
+				   OperationMode operationMode = OperationMode::MultiThreaded, 
+				   ThreadCountBase threadCountBase = ThreadCountBase::ThreadCount_32x32_div_2) noexcept;
+
 		virtual ~Mandelbrot();
 
 		int getIterationSimple(const double x, const double y) const noexcept;
 		int getIteration(const double x, const double y) const noexcept;
 		void saveImageToFile();
 
-		std::string to_string(ComplexRectangle& complexRectangle) const noexcept;
-
+		std::string to_string(ComplexRectangle& complexRectangle, OperationMode operationMode) const noexcept;
+		std::string getActiveEnhancedInstructionSet() const noexcept;
 	private:
 		void prepareIterationColors() noexcept;
 		void calculateSingleThread(const ComplexRectangle& complexRectangle, const Rectangle<int>& screenRectangle) noexcept;
+		void calculateMultiThreads(ComplexRectangle& complexRectangle, ThreadCountBase threadCountBase) noexcept;
 		void calculateMultiThreads(ComplexRectangle& complexRectangle) noexcept;
+		void calculateMultiThreads(ComplexRectangle& complexRectangle, int threadCountBase) noexcept;
 		void calculate(const ComplexRectangle& complexRectangle, const Rectangle<int>& screenRectangle) noexcept;
 		
 #if defined(__AVX512F__)

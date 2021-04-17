@@ -6,6 +6,7 @@
 #include "Timer.h"
 #include "Point.h"
 #include <thread>
+#include "FileSystem.h"
 
 #ifdef _WIN32
 #include <intrin.h>
@@ -35,23 +36,29 @@ namespace Fractals
 	{
 	}
 
-	Mandelbrot::Mandelbrot(const int width, const int height, const ColorPalette& colorPalette, int maxIterations) noexcept:
-		Fractal(width, height, colorPalette, maxIterations)
+	Mandelbrot::Mandelbrot(const int width, const int height, const ColorPalette& colorPalette, int maxIterations, OperationMode operationMode, ThreadCountBase threadCountBase) noexcept:
+		Fractal(width, height, colorPalette, maxIterations, operationMode, threadCountBase)
 	{
 		prepareIterationColors();
 
 		ComplexRectangle complexPlaneRectangle(-2.0 / 1.3, -1.0, 0.6 / 1.3 , 1.0);
-		int numberOfThreads = 32;
-		std::cout << to_string(complexPlaneRectangle) << "\n";
-		switch (numberOfThreads)
+		std::cout << to_string(complexPlaneRectangle, operationMode);
+		
+		switch (operationMode)
 		{
-		case 1:	
+		case OperationMode::SingleThreaded:
 		{
+			std::cout << ", Enhanced Instruction Set Active: " << getActiveEnhancedInstructionSet() << "\n";
 			calculateSingleThread(complexPlaneRectangle, screenSize_);
 		} break;
 		default:
 		{
-			calculateMultiThreads(complexPlaneRectangle);
+			const int threadCount = static_cast<int>(threadCountBase) * static_cast<int>(threadCountBase) / 2;
+			std::cout << ", Number of threads: " << threadCount << "\n";
+			std::cout << "Enhanced Instruction Set Active: " << getActiveEnhancedInstructionSet() << "\n";
+
+			calculateMultiThreads(complexPlaneRectangle, threadCountBase);
+			
 			std::cout << "\n";
 		} break;
 		
@@ -105,11 +112,27 @@ namespace Fractals
 
 	void Mandelbrot::calculateMultiThreads(ComplexRectangle& complexRectangle) noexcept
 	{
-		//const int threadCount = 2 * std::thread::hardware_concurrency();
-		constexpr int division = 32;
+		const int threadCountBasis = 2 * std::thread::hardware_concurrency();
+		calculateMultiThreads(complexRectangle, threadCountBasis);
+	}
 
-		constexpr int maxThreads = division * division;
-		std::thread threads[maxThreads];
+	void Mandelbrot::calculateMultiThreads(ComplexRectangle& complexRectangle, ThreadCountBase threadCountBase) noexcept
+	{
+		const int threadCountBasis = static_cast<int>(threadCountBase);
+		calculateMultiThreads(complexRectangle, threadCountBasis);
+	}
+
+	void Mandelbrot::calculateMultiThreads(ComplexRectangle& complexRectangle, int threadCountBase) noexcept
+	{
+		const int threadCountBasis = (threadCountBase < 2) ? 2 * std::thread::hardware_concurrency() : threadCountBase;
+
+		// We are calculating the square image so we are dividing the square into smaller square areas, each per thread. 
+		// However, we are using the symmetry of the Mandelbrot set on the x-axis, so we need to calculate only the bottom half of the image and mirror the points.
+		// Therefore, only half of the threads are needed.
+		const int maxThreads = threadCountBasis * threadCountBasis / 2; 
+		
+		std::vector< std::thread> threads;
+		threads.reserve(maxThreads);
 
 		std::vector<ComplexRectangle> complexRectangles;
 
@@ -118,12 +141,12 @@ namespace Fractals
 
 		std::vector<ScreenRectangle> screenRectangles;
 
-		ScreenSize rectangleScreenSize = screenSize_ / division;
-		double fractalWidth = (complexRectangle.topRightCorner_.coordinates_[0] - complexRectangle.bottomLeftCorner_.coordinates_[0]) / division;
+		ScreenSize rectangleScreenSize = screenSize_ / threadCountBasis;
+		double fractalWidth = (complexRectangle.topRightCorner_.coordinates_[0] - complexRectangle.bottomLeftCorner_.coordinates_[0]) / threadCountBasis;
 
 		for (int j = 0; j * j < maxThreads; ++j)
 		{
-			for (int i = 0; i * i < maxThreads; ++i)
+			for (int i = 0; i * i < 2 * maxThreads; ++i)
 			{
 				ComplexRectangle cpr(complexRectangle.bottomLeftCorner_.coordinates_[0] + i * fractalWidth, complexRectangle.bottomLeftCorner_.coordinates_[1] + j * fractalWidth,
 					complexRectangle.bottomLeftCorner_.coordinates_[0] + (i + 1) * fractalWidth, complexRectangle.bottomLeftCorner_.coordinates_[1] + (j + 1) * fractalWidth); // OK
@@ -133,17 +156,18 @@ namespace Fractals
 				rectangles.emplace_back(screenRegion);
 			}
 		}
-		for (int i = 0; i < maxThreads / 2; ++i)
+		for (int i = 0; i < maxThreads; ++i)
 		{
 #if defined(__AVX512F__)
-			threads[i] = std::thread(&Mandelbrot::calculateImmintrinsicAVX512, this, std::ref(complexRectangles[i]), std::ref(rectangles[i]));
+			threads.emplace_back(std::thread(&Mandelbrot::calculateImmintrinsicAVX512, this, std::ref(complexRectangles[i]), std::ref(rectangles[i])));
 #elif defined(__AVX2__)
-			threads[i] = std::thread(&Mandelbrot::calculateImmintrinsicAVX2, this, std::ref(complexRectangles[i]), std::ref(rectangles[i]));
+			threads.emplace_back(std::thread(&Mandelbrot::calculateImmintrinsicAVX2, this, std::ref(complexRectangles[i]), std::ref(rectangles[i])));
 #else
-			threads[i] = std::thread(&Mandelbrot::calculate, this, std::ref(complexRectangles[i]), std::ref(rectangles[i]));
+			threads.emplace_back(std::thread(&Mandelbrot::calculate, this, std::ref(complexRectangles[i]), std::ref(rectangles[i])));
 #endif
 		}
-		for (size_t i = 0; i < maxThreads / 2; i++) threads[i].join();
+
+		for (size_t i = 0; i < maxThreads; i++) threads[i].join();
 	}
 
 	void Mandelbrot::calculate(const ComplexRectangle& complexRectangle, const ScreenRectangle& screenRectangle) noexcept
@@ -176,7 +200,7 @@ namespace Fractals
 			step.coordinates_[0] += discreteStep.coordinates_[0];
 		}
 		timer.end(false);
-		checkCalculationPercentage(Timer::calls_, 1, 1, 32 * 32 / 2);
+		checkCalculationPercentage(Timer::calls_, 1, 1, static_cast<int>(threadCountBase_) * static_cast<int>(threadCountBase_) / 2);
 	}
 
 #if defined(__AVX512F__)
@@ -454,15 +478,32 @@ namespace Fractals
 
 	void Mandelbrot::saveImageToFile()
 	{
-		std::string fileName(".\\Fractals\\Mandelbrot_");
-		fileName += std::to_string(screenSize_.coordinates_[0]) + "x" + std::to_string(screenSize_.coordinates_[1]) + "_" + std::to_string(maxIterations_) + "_" + colorPalette_.getPaletteName() + ".bmp";
-		saveToFile(fileName);
+		if (FileSystem::checkRelativeFilePath("Fractals"))
+		{
+			std::string fileName(".\\Fractals\\Mandelbrot_");
+			fileName += std::to_string(screenSize_.coordinates_[0]) + "x" + std::to_string(screenSize_.coordinates_[1]) + "_" + std::to_string(maxIterations_) + "_" + colorPalette_.getPaletteName() + ".bmp";
+			saveToFile(fileName);
+		}	
 	}
 
-	std::string Mandelbrot::to_string(ComplexRectangle& complexRectangle) const noexcept
+	std::string Mandelbrot::to_string(ComplexRectangle& complexRectangle, OperationMode operationMode) const noexcept
 	{
-		std::string outputString = "Creating Mandelbrot set: [" + complexRectangle.to_string() + "], size: " + screenSize_.to_string() + 
-									"\nMax iterations: " + std::to_string(maxIterations_) + ", palette: " + colorPalette_.getPaletteName() + ".";
+		std::string outputString =	"Creating Mandelbrot set: [" + complexRectangle.to_string() + "]\n"
+									"Image size: " + screenSize_.to_string(false) + ", Max iterations: " + std::to_string(maxIterations_) + ", palette: " + colorPalette_.getPaletteName() + "\n"
+									"Operation Mode: " + Fractal::operationModeToString(operationMode);
 		return outputString;
+	}
+	
+	std::string Mandelbrot::getActiveEnhancedInstructionSet() const noexcept
+	{
+		std::string result;
+#if defined(__AVX512F__)
+		result = "AVX512F";
+#elif defined(__AVX2__)
+		result = "AVX2 (256-bit SIMD)";
+#else
+		result = "No supported enhanced instruction set active.";
+#endif
+		return result;
 	}
 }
