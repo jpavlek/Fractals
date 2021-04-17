@@ -1,6 +1,9 @@
 #pragma once
 #pragma pack(2)
 
+namespace FileSystem
+{
+
 struct BitmapInfoHeader
 {
 	int32_t headerSize_{ 40 };
@@ -15,3 +18,5 @@ struct BitmapInfoHeader
 	int32_t colors_{ 0 };
 	int32_t importantColors_{ 0 };
 };
+
+}

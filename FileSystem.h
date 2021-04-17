@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 
+namespace FileSystem
+{
+
 class FileSystem
 {
 public:
@@ -18,3 +21,4 @@ public:
 
 };
 
+}
