@@ -13,53 +13,40 @@
 #include <intrin.h>
 #endif
 
+void runAllPerformanceTests()
+{
+	ColorPaletteCreator::createAllPalettesTest();
+
+	Fractals::Mandelbrot::createAllThreadsTest();
+}
+
 int main()
 {
-	Timer timer;
-	timer.start();
+	Timer timerTotal;
+	timerTotal.start();
 
 	ProcessorFeatureSet::checkProcessorFeatures();
 
-	int const width = 2 * 2 * 2048;
-	int const height = 2 * 2 * 2048;
-	int const maxIterations = 2048;
+	const int width = 2 * 4096;
+	const int height = 2 * 4096;
+	const int maxIterations = 4096;
 
-#ifdef DEBUG
-	ColorPaletteCreator::createAllPalettesTest();
-#endif // DEBUG
+	Timer timerOptimized;
+	timerOptimized.start();
 
 	ColorPalette colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBSpectrum10, 2);
 	std::cout << "\n";
-	
-	std::vector<ThreadCountBase> threadCountBases;
 
-	{
-		Timer timer;
-		timer.start();
-		Fractals::Mandelbrot mandelbrot(width, height, colorPalette, maxIterations, OperationMode::SingleThreaded, ThreadCountBase::ThreadCount_02x02_div_2);
-		std::cout << "\n";
-		timer.end();
-		std::cout << "\n";
-	}
-	
-	threadCountBases.emplace_back(ThreadCountBase::ThreadCount_02x02_div_2);
-	threadCountBases.emplace_back(ThreadCountBase::ThreadCount_04x04_div_2);
-	threadCountBases.emplace_back(ThreadCountBase::ThreadCount_08x08_div_2);
-	threadCountBases.emplace_back(ThreadCountBase::ThreadCount_16x16_div_2);
-	threadCountBases.emplace_back(ThreadCountBase::ThreadCount_32x32_div_2);
-	threadCountBases.emplace_back(ThreadCountBase::ThreadCount_64x64_div_2);
+	Fractals::Mandelbrot mandelbrot(width, height, colorPalette, maxIterations, OperationMode::MultiThreaded, ThreadCountBase::ThreadCount_32x32_div_2);
+	std::cout << "\n";
 
-	for (const auto threadCountBase : threadCountBases)
-	{
-		Timer timer;
-		timer.start();
-		Fractals::Mandelbrot mandelbrot(width, height, colorPalette, maxIterations, OperationMode::MultiThreaded, threadCountBase);
-		std::cout << "\n";
-		timer.end();
-		std::cout << "\n";
-	}
+	timerOptimized.end();
+	std::cout << "\n";
+	Timer::resetCalls();
+
+	runAllPerformanceTests();
 
 	std::cout << "Done.\n";
-	timer.end();
+	timerTotal.end();
 	return 0;
 }
