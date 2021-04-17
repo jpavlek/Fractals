@@ -183,8 +183,12 @@ void ColorPalette::saveColorPaletteAsBitmapFile(std::string fileName) noexcept
 		}
 	}
 
-	std::cout << "Saving color palette bitmap image to file: \"" << fileName << "\".\n";
 	bool result = bitmap.write(fileName);
+	if (result)
+	{
+		std::cout << "Color palette " << paletteName_ << " saved to file: \"" << fileName << "\".\n";
+	}
+	
 }
 
 void ColorPalette::saveColorPaletteAsBitmapFile() noexcept
