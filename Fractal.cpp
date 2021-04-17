@@ -61,7 +61,7 @@ namespace Fractals
 
 		percentageCalculated_ = currentPercentage;
 		std::string progressBarString = progressBar("[", currentPercentage, 100, "]");
-		std::string progBar = std::string(111, '\b') + progressBarString + std::string(111, '\b');
+		std::string progBar = std::string(111, '\b') + progressBarString;
 		std::cout << progBar;
 	}
 
