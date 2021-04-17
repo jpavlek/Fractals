@@ -18,7 +18,8 @@ namespace Fractals
 		static constexpr const int MAX_ITERATIONS_DEFAULT = 64;
 	private:
 		std::vector<Color> iterationColors_;
-
+	public:
+		static void createAllThreadsTest(const int width = 4096, const int height = 4096, const int maxIterations = 2048);
 	public:
 		Mandelbrot() noexcept;
 		Mandelbrot(const int width, const int height) noexcept;
@@ -37,6 +38,7 @@ namespace Fractals
 
 		std::string to_string(ComplexRectangle& complexRectangle, OperationMode operationMode) const noexcept;
 		std::string getActiveEnhancedInstructionSet() const noexcept;
+		std::string getFractalFileName() const noexcept;
 	private:
 		void prepareIterationColors() noexcept;
 		void calculateSingleThread(const ComplexRectangle& complexRectangle, const Rectangle<int>& screenRectangle) noexcept;

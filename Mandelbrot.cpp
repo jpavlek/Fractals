@@ -7,6 +7,8 @@
 #include "Point.h"
 #include <thread>
 #include "FileSystem.h"
+#include "ColorPaletteCreator.h"
+#include <string>
 
 #ifdef _WIN32
 #include <intrin.h>
@@ -16,6 +18,47 @@ using ScreenRectangle = Rectangle<int>;
 using ScreenOffset = Point<int>;
 namespace Fractals
 {
+	void Mandelbrot::createAllThreadsTest(const int width, const int height, const int maxIterations)
+	{
+		const std::string outputString = "\nThreads Performance Test - SingleThreaded to Multithreadeded Performance Comparison (Threads: 2, 8, 32, 128, 512, 2048):\n" 
+										"========================================================================================================================\n\n";
+		std::cout << outputString;
+
+		ColorPalette colorPalette = ColorPaletteCreator::createPalette(ColorPalettesClass::RGBCube4, 1);
+		std::cout << "\n";
+
+		{
+			Timer::resetCalls();
+			Timer timer;
+			timer.start();
+			Fractals::Mandelbrot mandelbrot(width, height, colorPalette, maxIterations, OperationMode::SingleThreaded, ThreadCountBase::ThreadCount_02x02_div_2);
+			std::cout << "\n";
+			timer.end();
+			Timer::resetCalls();
+			std::cout << "\n";
+		}
+
+		std::vector<ThreadCountBase> threadCountBases;
+		threadCountBases.emplace_back(ThreadCountBase::ThreadCount_02x02_div_2);
+		threadCountBases.emplace_back(ThreadCountBase::ThreadCount_04x04_div_2);
+		threadCountBases.emplace_back(ThreadCountBase::ThreadCount_08x08_div_2);
+		threadCountBases.emplace_back(ThreadCountBase::ThreadCount_16x16_div_2);
+		threadCountBases.emplace_back(ThreadCountBase::ThreadCount_32x32_div_2);
+		//threadCountBases.emplace_back(ThreadCountBase::ThreadCount_64x64_div_2);
+		
+		for (const auto threadCountBase : threadCountBases)
+		{
+			Timer::resetCalls();
+			Timer timer;
+			timer.start();
+			Fractals::Mandelbrot mandelbrot(width, height, colorPalette, maxIterations, OperationMode::MultiThreaded, threadCountBase);
+			std::cout << "\n";
+			timer.end();
+			Timer::resetCalls();
+			std::cout << "\n";
+		}
+	}
+
 	Mandelbrot::Mandelbrot() noexcept:
 		Mandelbrot(DEFAULT_X, DEFAULT_Y, ColorPalette(), MAX_ITERATIONS_DEFAULT)
 	{
@@ -80,6 +123,7 @@ namespace Fractals
 
 	void Mandelbrot::calculateSingleThread(const ComplexRectangle& complexRectangle, const ScreenRectangle& screenRectangle) noexcept
 	{
+		checkCalculationPercentage(0, 16, 0, 100);
 		const ScreenOffset screenOffset = screenRectangle.bottomLeftCorner_;
 		const ScreenSize screenSize = screenRectangle.size();
 		const ComplexPoint complexOffset = complexRectangle.bottomLeftCorner_;
@@ -124,6 +168,7 @@ namespace Fractals
 
 	void Mandelbrot::calculateMultiThreads(ComplexRectangle& complexRectangle, int threadCountBase) noexcept
 	{
+		checkCalculationPercentage(0, 16, 0, 100);
 		const int threadCountBasis = (threadCountBase < 2) ? 2 * std::thread::hardware_concurrency() : threadCountBase;
 
 		// We are calculating the square image so we are dividing the square into smaller square areas, each per thread. 
@@ -206,6 +251,7 @@ namespace Fractals
 #if defined(__AVX512F__)
 	void Mandelbrot::calculateImmintrinsicAVX512(const ComplexRectangle& complexRectangle, const ScreenRectangle& screenRectangle) noexcept
 	{
+		Timer timer;
 		const ScreenOffset screenOffset = screenRectangle.bottomLeftCorner_;
 		const ScreenSize screenSize = screenRectangle.size();
 		const ComplexPoint complexOffset = complexRectangle.bottomLeftCorner_;
@@ -275,6 +321,8 @@ namespace Fractals
 			}
 			step.coordinates_[0] += discreteStep.coordinates_[0];
 		}
+		timer.end(false);
+		checkCalculationPercentage(Timer::calls_, 1, 1, static_cast<int>(threadCountBase_) * static_cast<int>(threadCountBase_) / 2);
 	}
 
 	__m512i Mandelbrot::getIterationImintrin(const __m512d x, const __m512d y) const noexcept
@@ -325,6 +373,7 @@ namespace Fractals
 #elif defined(__AVX2__)
 	void Mandelbrot::calculateImmintrinsicAVX2(const ComplexRectangle& complexRectangle, const ScreenRectangle& screenRectangle) noexcept
 	{
+		Timer timer;
 		const ScreenOffset screenOffset = screenRectangle.bottomLeftCorner_;
 		const ScreenSize screenSize = screenRectangle.size();
 		const ComplexPoint complexOffset = complexRectangle.bottomLeftCorner_;
@@ -381,6 +430,8 @@ namespace Fractals
 			}
 			step.coordinates_[0] += discreteStep.coordinates_[0];
 		}
+		timer.end(false);
+		checkCalculationPercentage(Timer::calls_, 1, 1, static_cast<int>(threadCountBase_) * static_cast<int>(threadCountBase_) / 2);
 	}
 
 	__m256i Mandelbrot::getIterationImintrin(const __m256d x, const __m256d y) const noexcept
@@ -480,16 +531,16 @@ namespace Fractals
 	{
 		if (FileSystem::checkRelativeFilePath("Fractals"))
 		{
-			std::string fileName(".\\Fractals\\Mandelbrot_");
-			fileName += std::to_string(screenSize_.coordinates_[0]) + "x" + std::to_string(screenSize_.coordinates_[1]) + "_" + std::to_string(maxIterations_) + "_" + colorPalette_.getPaletteName() + ".bmp";
+			std::string fileName = getFractalFileName();
 			saveToFile(fileName);
 		}	
 	}
 
 	std::string Mandelbrot::to_string(ComplexRectangle& complexRectangle, OperationMode operationMode) const noexcept
 	{
-		std::string outputString =	"Creating Mandelbrot set: [" + complexRectangle.to_string() + "]\n"
-									"Image size: " + screenSize_.to_string(false) + ", Max iterations: " + std::to_string(maxIterations_) + ", palette: " + colorPalette_.getPaletteName() + "\n"
+		std::string outputString =	"Creating Mandelbrot set: [" + complexRectangle.to_string() + "], Max iterations : " + std::to_string(maxIterations_) + "\n"
+									"Image name: " + getFractalFileName() +  ", Image size: " + screenSize_.to_string(false) + "\n"
+									"Palette: " + colorPalette_.getPaletteName() + ", Palette size: " + std::to_string(colorPalette_.getPaletteSize()) + "\n"
 									"Operation Mode: " + Fractal::operationModeToString(operationMode);
 		return outputString;
 	}
@@ -505,5 +556,13 @@ namespace Fractals
 		result = "No supported enhanced instruction set active.";
 #endif
 		return result;
+	}
+
+	std::string Mandelbrot::getFractalFileName() const noexcept
+	{
+		const std::string fileName = std::string((".\\Fractals\\Mandelbrot_")) + 
+				std::to_string(screenSize_.coordinates_[0]) + "x" + std::to_string(screenSize_.coordinates_[1]) + "_" +
+				std::to_string(maxIterations_) + "_" + colorPalette_.getPaletteName() + ".bmp";
+		return fileName;
 	}
 }
