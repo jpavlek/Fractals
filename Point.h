@@ -32,7 +32,6 @@ namespace Geometry
 
 	using Pixel = Point<int>;
 	using ComplexPoint = Point<double>;
-	//using ComplexPoint = std::complex<double>; // TODO: Check performance of std::complex<double> compared to Point<double>
 
 	template< typename T, int dimensions>
 	Point<T, dimensions>::Point() noexcept
