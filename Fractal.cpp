@@ -5,20 +5,22 @@
 namespace Fractals
 {
 	Fractal::Fractal()  noexcept:
-		Fractal(DEFAULT_X, DEFAULT_Y, ColorPalette(), DEFAULT_MAX_ITERATIONS)
+		Fractal(DEFAULT_X, DEFAULT_Y, ColorPalette(), DEFAULT_MAX_ITERATIONS, OperationMode::MultiThreaded, ThreadCountBase::ThreadCount_08x08_div_2)
 	{
 	}
 
 	Fractal::Fractal(const int width, const int height)  noexcept:
-		Fractal(width, height, ColorPalette(), DEFAULT_MAX_ITERATIONS)
+		Fractal(width, height, ColorPalette(), DEFAULT_MAX_ITERATIONS, OperationMode::MultiThreaded, ThreadCountBase::ThreadCount_08x08_div_2)
 	{
 	}
 
-	Fractal::Fractal(const int width, const int height, const ColorPalette& colorPalette, const int maxIterations) noexcept:
+	Fractal::Fractal(const int width, const int height, const ColorPalette& colorPalette, const int maxIterations, OperationMode operationMode, ThreadCountBase threadCountBase) noexcept:
 		screenSize_{ width, height },
 		bitmap_{ width, height },
 		colorPalette_{ colorPalette },
-		maxIterations_ { maxIterations }
+		maxIterations_ { maxIterations },
+		operationMode_ { operationMode},
+		threadCountBase_{ threadCountBase }
 	{
 	}
 
@@ -52,17 +54,18 @@ namespace Fractals
 		}
 		int currentPercentage = 100 * currentCount / maxValue;
 		
-		if (currentPercentage - percentageCalculated_ < increaseStep)
+		if (currentPercentage - percentageCalculated_ < increaseStep || currentPercentage > 100)
 		{
 			return;
 		}
 
 		percentageCalculated_ = currentPercentage;
-		std::string progBar = std::string(111, '\b') + progressBar("[", currentPercentage, 100, "]") + std::string(111, '\b');
+		std::string progressBarString = progressBar("[", currentPercentage, 100, "]");
+		std::string progBar = std::string(111, '\b') + progressBarString + std::string(111, '\b');
 		std::cout << progBar;
 	}
 
-	std::string Fractal::progressBar(std::string prefix, int percentage, int total, std::string postfix) const noexcept
+	std::string Fractal::progressBar(const std::string prefix, const int percentage, const int total, const std::string postfix) const
 	{
 		std::string progressBar = prefix + std::string(std::max(percentage, 0), '=') + ">" + std::string(total - percentage, '.') + postfix + " " + std::to_string(percentage) + "/" + std::to_string(total) + "%";
 		return progressBar;
@@ -73,6 +76,26 @@ namespace Fractals
 		std::cout << "Saving fractal image to file: " << filename << "... ";
 		bool result = bitmap_.write(filename);
 		return result;
+	}
+
+	std::string Fractal::operationModeToString(const OperationMode operationMode)
+	{
+		std::string operationModeString;
+
+		switch (operationMode)
+		{
+		case OperationMode::SingleThreaded:
+			operationModeString = "Singlethreaded";
+			break;
+		case OperationMode::MultiThreaded:
+			operationModeString = "Multithreaded";
+			break;
+		default:
+			operationModeString = "Multithreaded(?)";
+			break;
+		}
+
+		return operationModeString;
 	}
 
 }
